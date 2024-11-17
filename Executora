@@ -16,6 +16,8 @@ public class Executora {
 		        System.out.println("5. Listar Carros");
 		        System.out.println("6. Listar Loja");
 		        System.out.println("7. Listar Carros da Loja");
+		        System.out.println("8. Excluir Carro");
+		        System.out.println("9. Excluir Loja");
 				System.out.println("0- Sair");
 				System.out.println("Escolha uma opção");
 				int opcao = scanner.nextInt();		
@@ -35,8 +37,13 @@ public class Executora {
                     System.out.println("Digite o id da loja");
                     int idLoja = scanner.nextInt();
                     scanner.nextLine();
-                    System.out.println("Marca capturada: " + marca);
-                    Veiculo e = new Veiculo (codigo, marca, modelo, ano, idLoja);
+                    System.out.println("Digite o preco do carro");
+                    float preco = scanner.nextFloat();
+                    scanner.nextLine();
+                    System.out.println("Digite o estado de conservação do carro(NOVO | SEMI_NOVO | USADO | BATIDO");
+                    String estado = scanner.next();
+                    scanner.nextLine();                    
+                    Veiculo e = new Veiculo (codigo, marca, modelo, ano, idLoja, preco, estado);
                     crud.createVeiculo(e);
                     break;
                 case 2:
@@ -50,10 +57,70 @@ public class Executora {
                     Loja loja = new Loja(codigoLoja, nome, endereco);
                     crud.createLoja(loja);
                     break;
+                
+                case 3:
+                	System.out.println("Digite o código do veiculo que deseja editar: ");
+                	int codigoEditaVeiculo = scanner.nextInt();
+                	scanner.nextLine();
+                	System.out.println("Digite a nova marca: ");
+                	String novaMarca = scanner.nextLine();
+                	System.out.println("Digite o novo modelo: ");
+                	String novoModelo = scanner.nextLine();
+                	System.out.println("Digite o novo ano do veiculo: ");
+                	int novoAno = scanner.nextInt();
+                	scanner.nextLine();
+                	System.out.println("Digite o novo Id da Loja");
+                	int idNovo = scanner.nextInt();
+                	scanner.nextLine();
+                	System.out.println("Digite o novo preco: ");
+                	float precoNovo = scanner.nextFloat();
+                	scanner.nextLine();
+                	System.out.println("Digite o novo estado (NOVO | SEMI_NOVO | USADO | BATIDO): ");
+                	String estadoNovo = scanner.nextLine();
+                	
+                	crud.updateVeiculo(codigoEditaVeiculo, novaMarca, novoModelo, novoAno, idNovo, precoNovo, estadoNovo);
+                	break;
+                    
+                case 4: 
+                	System.out.println("Digite o codigo da loja que deseja editar: ");
+                	int codigoEditaLoja = scanner.nextInt();
+                	scanner.nextLine();
+                	System.out.println("Digite o novo nome: ");
+                	String nomeNovo = scanner.nextLine();
+                	System.out.println("Digite o novo endereco: ");
+                	String enderecoNovo = scanner.nextLine();
+                	crud.updateLoja(codigoEditaLoja, nomeNovo, enderecoNovo);
+                	break;
+                    
+                case 5:
+                	crud.readVeiculo();
+                	break;
+                	
                 case 6:
                 	crud.readLoja();
                 	break;
-                    
+                   
+                case 7:
+                	System.out.println("Digite o Id da Loja que deseja verificar");
+                	idLoja = scanner.nextInt();
+                	scanner.nextLine();
+                	crud.readVeiculoLoja(idLoja);
+                	break;
+                	
+                case 8:
+                	System.out.println("Digite o codigo do Veiculo que deseja excluir: ");
+                	int codigoDeleteVeiculo = scanner.nextInt();
+                	scanner.nextLine();
+                	crud.deleteVeiculo(codigoDeleteVeiculo);
+                	break;
+                	
+                case 9:
+                	System.out.println("Digite o codigo da Loja que deseja excluir (A loja não pode ter veiculos cadsatrados) : ");
+                	int codigoDeletarLoja = scanner.nextInt();
+                	scanner.nextLine();
+                	crud.deleteLoja(codigoDeletarLoja);
+                	break;
+                	
                 case 0:
                     continuar = false; 
                     System.out.println("Saindo...");
