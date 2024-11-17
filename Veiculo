@@ -6,13 +6,18 @@ public class Veiculo {
 	private String modelo;
 	private int anoFabricacao;
 	private int idLoja;
+	private float preco;
+	private String estado;
 	
-	public Veiculo(int codigo, String marca, String modelo, int anoFabricacao, int idLoja) {
+	public Veiculo(int codigo, String marca, String modelo, int anoFabricacao, int idLoja, float preco, String estado) {
 		this.codigo = codigo;
 		this.marca = marca;
 		this.modelo = modelo;
 		this.anoFabricacao = anoFabricacao;
 		this.idLoja = idLoja;
+		this.preco = preco;
+		this.estado = estado;
+		
 	}
 	
 	@Override
@@ -21,6 +26,8 @@ public class Veiculo {
 	            "Marca: " + marca + "\n" +
 	            "Modelo: " + modelo + "\n" +
 	            "Ano: " + anoFabricacao + "\n" +
+	            "Estado" + estado + "\n" +
+	            "Preço: " + preco + "\n" +
 	            "Id da Loja: " + idLoja;
 	            
 	 }
@@ -56,4 +63,19 @@ public class Veiculo {
 		this.idLoja = idLoja;
 	}
 	
+	public float getPreco() {
+		return preco;
+	}
+	
+	public void setPreco(float preco) {
+		this.preco = preco;
+	}
+	
+	public String getEstado() {
+		return estado;
+	}
+	
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
 }
