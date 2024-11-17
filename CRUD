@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
  
 public class CRUD {
 	Connection connect = null;
@@ -12,7 +14,7 @@ public class CRUD {
 	connect = ConectionMySQL.getConectionMySQL();
 	}
 	public void createVeiculo(Veiculo e) {
-		String sql = "insert into veiculo values (?, ?, ?, ?, ?)";
+		String sql = "insert into veiculo values (?, ?, ?, ?, ?, ?, ?)";
 		try {
 			PreparedStatement pst;
 			pst = connect.prepareStatement(sql);
@@ -21,6 +23,8 @@ public class CRUD {
 			pst.setString(3, e.getModelo());
 			pst.setInt(4, e.getAnoFabricacao());
 			pst.setInt(5, e.getLoja());
+			pst.setFloat(6, e.getPreco());
+			pst.setString(7, e.getEstado());
 			pst.executeUpdate();
 			System.out.println("Veiculo cadastrado!");
 			
@@ -62,86 +66,154 @@ public class CRUD {
 		}
 	}
 	
-	public void updatePet(int codigo, String nome, int peso, boolean reproducao) {
-		String sql = "UPDATE pets SET nome = ?, peso = ?, reproducao = ? WHERE codigo = ?";
+	public void readVeiculo() {
+		String sql = "SELECT codigo, marca, modelo, ano, idLoja, preco, estado FROM veiculo";
 		try {
 			PreparedStatement pst;
 			pst = connect.prepareStatement(sql);
-			pst.setString(1, nome);
-			pst.setInt(4, codigo);
-			pst.setInt(2, peso);
-			pst.setBoolean(3, reproducao);
+			ResultSet rst = pst.executeQuery();
+			while(rst.next()) {
+				int codigo = rst.getInt("codigo");
+				String marca = rst.getString(2);
+				String modelo = rst.getString(3);
+				int ano = rst.getInt(4);
+				int idLoja = rst.getInt(5);
+				float preco = rst.getFloat(6);
+				String estado = rst.getString(7);
 			
-			
-			int ret = pst.executeUpdate();
-			if(ret > 0) {
-				System.out.printf("Pet atualizado, novo nome: %s",nome);
+				System.out.printf("Código: %d \n Marca: %s \n Modelo: %s \n Ano: %d \n Id da Loja: %d \n Preco: R$%.2f \n Estado: %s\n", codigo, marca, modelo, ano, idLoja, preco, estado);
 			}
-			else{
-				System.out.println("Não foi possivel alterar registro do Pet");
-			}
-		}catch(SQLException se) {
-			System.out.println("Erro ao atualizar o registro do Pet" + se);
-			
+		}catch(SQLException se){
+			System.out.println("Erro ao consultar a tabela veiculo " + se);
 		}
-	
 	}
-	public void deletePet(int codigo) {
-		String sql = "DELETE FROM pets WHERE codigo = ?";
+	
+	
+	public List<Veiculo> readVeiculoLoja(int idLoja) {
+	    String sql = "SELECT codigo, marca, modelo, ano, idLoja, preco, estado FROM veiculo WHERE idLoja = ?";
+	    List<Veiculo> veiculos = new ArrayList<>();
+	    
+	    try {
+	        PreparedStatement pst = connect.prepareStatement(sql);
+	        pst.setInt(1, idLoja);
+	        ResultSet rst = pst.executeQuery();
+	        
+	        while (rst.next()) {
+	            int codigo = rst.getInt("codigo");
+	            String marca = rst.getString("marca");
+	            String modelo = rst.getString("modelo");
+	            int ano = rst.getInt("ano");
+	            int idLojaRetornado = rst.getInt("idLoja");
+	            float preco = rst.getFloat("preco");
+	            String estado = rst.getString("estado");
+	            
+	            
+	            Veiculo veiculo = new Veiculo(codigo, marca, modelo, ano, idLojaRetornado, preco, estado);
+	            veiculos.add(veiculo);
+	            
+	            // Imprimindo as informações do veículo na tela
+	            System.out.printf("Código: %d\nMarca: %s\nModelo: %s\nAno: %d\nId da Loja: %d\n Preco: %.2f\n Estado: %s \n", 
+	                              veiculo.getCodigo(), veiculo.getMarca(), veiculo.getModelo(), 
+	                              veiculo.getAnoFabricacao(), veiculo.getLoja(), veiculo.getPreco(), veiculo.getEstado());
+	        }
+	    } catch (SQLException se) {
+	        System.out.println("Erro ao consultar os veículos da loja: " + se);
+	    }
+	    return veiculos;
+	}
+
+	public void deleteVeiculo(int codigo) {
+		String sql = "DELETE FROM veiculo WHERE codigo = ?";
 		try {
 			PreparedStatement pst;
 			pst = connect.prepareStatement(sql);
 			pst.setInt(1, codigo);
 			int ret = pst.executeUpdate();
 			if(ret > 0) {
-				System.out.printf("Pet excluido com sucesso");
+				System.out.printf("Veiuclo excluido com sucesso");
 			}
 			else{
-				System.out.println("Não foi possivel excluir registro Pet");
+				System.out.println("Não foi possivel excluir registro veiculo");
 			}
 			
 			}catch(SQLException se){
-				System.out.println("Erro ao excluir registro Pet" + se);
+				System.out.println("Erro ao excluir registro veiculo" + se);
+				}
+			}
+	
+	public void deleteLoja(int codigo) {
+		String sql = "DELETE FROM loja WHERE codigo = ?";
+		try {
+			PreparedStatement pst;
+			pst = connect.prepareStatement(sql);
+			pst.setInt(1, codigo);
+			int ret = pst.executeUpdate();
+			if(ret > 0) {
+				System.out.printf("Loja excluida com sucesso");
+			}
+			else{
+				System.out.println("Não foi possivel excluir registro Loja");
+			}
+			
+			}catch(SQLException se){
+				System.out.println("Erro ao excluir registro Loja" + se);
 				}
 			}
 		
-	public void updatePetPreco(int codigo) {
-	    String selectSql = "SELECT preco, reproducao FROM pets WHERE codigo = ?";
-	    String updateSql = "UPDATE pets SET preco = ? WHERE codigo = ?";
-
-	    try (
-	        PreparedStatement selectPst = connect.prepareStatement(selectSql);
-	        PreparedStatement updatePst = connect.prepareStatement(updateSql)
-	    ) {
-	        
-	        selectPst.setInt(1, codigo);
-	        ResultSet rs = selectPst.executeQuery();
-
-	        if (rs.next()) {
-	            double precoAtual = rs.getDouble("preco");
-	            boolean isReproducao = rs.getBoolean("reproducao");
-
-	            if (!isReproducao) {
-	                precoAtual *= 1.05;
-	            }
-
-	           
-	            updatePst.setDouble(1, precoAtual);
-	            updatePst.setInt(2, codigo);
-
-	            int ret = updatePst.executeUpdate();
-	            if (ret > 0) {
-	                System.out.printf("Peso do Pet atualizado para: %.2f%n", precoAtual);
-	            } else {
-	                System.out.println("Não foi possível atualizar o peso do Pet");
-	            }
-	        } else {
-	            System.out.println("Pet com o código especificado não encontrado.");
-	        }
-	    } catch (SQLException se) {
-	        System.out.println("Erro ao atualizar o peso do Pet: " + se.getMessage());
-	    }
-	}
-
-	}
+	public void updateVeiculo(int codigo, String marca, String modelo, int anoFabricacao, int idLoja, float preco, String estado) {
+		String sql = "UPDATE veiculo SET marca = ?, modelo = ?, ano = ?, idLoja = ?, preco = ?, estado = ? WHERE codigo = ?";
+		try {
+			PreparedStatement pst;
+			pst = connect.prepareStatement(sql);
+			pst.setString(1, marca);
+			pst.setString(2, modelo);
+			pst.setInt(3, anoFabricacao);
+			pst.setInt(4, idLoja);
+			pst.setFloat(5, preco);
+			pst.setString(6, estado);
+			pst.setInt(7, codigo);
+			
+			
+			
+			int ret = pst.executeUpdate();
+			if(ret > 0) {
+				System.out.printf("Veiculo atualizado: %s",modelo);
+			}
+			else{
+				System.out.println("Não foi possivel alterar registro do Veiculo");
+			}
+		}catch(SQLException se) {
+			System.out.println("Erro ao atualizar o registro do Veiculo" + se);
+			
+		}
 	
+	}
+
+	public void updateLoja(int codigo, String nome, String endereco) {
+		String sql = "UPDATE loja SET nome= ?, endereco= ? WHERE codigo = ?";
+		try {
+			PreparedStatement pst;
+			pst = connect.prepareStatement(sql);
+			pst.setString(1, nome);
+			pst.setString(2, endereco);
+			pst.setInt(3, codigo);
+			
+			
+			
+			int ret = pst.executeUpdate();
+			if(ret > 0) {
+				System.out.printf("Loja atualizada: %s",nome);
+			}
+			else{
+				System.out.println("Não foi possivel alterar registro da Loja");
+			}
+		}catch(SQLException se) {
+			System.out.println("Erro ao atualizar o registro da Loja" + se);
+			
+		}
+	
+	}
+
+
+
+}
