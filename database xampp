@@ -1,0 +1,5 @@
+create table veiculo(codigo int not null, marca varchar(150) not null, modelo varchar(150) not null, ano int not null, int idLoja not null, preco float not null, estado Enum (NOVO, SEMI_NOVO, USADO, BATIDO), primary key(codigo));
+create table loja (codigo int not null, nome varchar(150) not null, endereco varchar(150) not null, primary key(codigo));
+depois de criado adicionar 
+CONSTRAINT fk_idLoja
+    FOREIGN KEY (idLoja) REFERENCES loja(codigo)
