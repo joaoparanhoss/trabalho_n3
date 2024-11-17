@@ -1,0 +1,147 @@
+package trabalho;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+ 
+public class CRUD {
+	Connection connect = null;
+	
+	public void ConnectionDB() {
+	connect = ConectionMySQL.getConectionMySQL();
+	}
+	public void createVeiculo(Veiculo e) {
+		String sql = "insert into veiculo values (?, ?, ?, ?, ?)";
+		try {
+			PreparedStatement pst;
+			pst = connect.prepareStatement(sql);
+			pst.setInt(1, e.getCodigo());
+			pst.setString(2, e.getMarca());
+			pst.setString(3, e.getModelo());
+			pst.setInt(4, e.getAnoFabricacao());
+			pst.setInt(5, e.getLoja());
+			pst.executeUpdate();
+			System.out.println("Veiculo cadastrado!");
+			
+		}catch(SQLException ex){
+			System.out.println("Veiculo cadastrado!" + ex);
+		}
+	}
+	
+	public void createLoja(Loja e) {
+		String sql = "insert into loja values (?, ?, ?)";
+		try {
+			PreparedStatement pst;
+			pst = connect.prepareStatement(sql);
+			pst.setInt(1, e.getCodigo());
+			pst.setString(2, e.getNome());
+			pst.setString(3, e.getEndereco());
+			pst.executeUpdate();
+			System.out.println("Loja cadastrado!");
+			
+		}catch(SQLException ex){
+			System.out.println("Erro ao cadastrar loja!" + ex);
+		}
+	}
+ 
+	public void readLoja() {
+		String sql = "SELECT codigo, nome, endereco FROM loja";
+		try {
+			PreparedStatement pst;
+			pst = connect.prepareStatement(sql);
+			ResultSet rst = pst.executeQuery();
+			while(rst.next()) {
+				int codigo = rst.getInt("codigo");
+				String nome = rst.getString(2);
+				String endereco = rst.getString(3);
+				System.out.printf("Código: %d \n Nome: %s \n Endereco: %s \n", codigo, nome, endereco);
+			}
+		}catch(SQLException se){
+			System.out.println("Erro ao consultar a Loja " + se);
+		}
+	}
+	
+	public void updatePet(int codigo, String nome, int peso, boolean reproducao) {
+		String sql = "UPDATE pets SET nome = ?, peso = ?, reproducao = ? WHERE codigo = ?";
+		try {
+			PreparedStatement pst;
+			pst = connect.prepareStatement(sql);
+			pst.setString(1, nome);
+			pst.setInt(4, codigo);
+			pst.setInt(2, peso);
+			pst.setBoolean(3, reproducao);
+			
+			
+			int ret = pst.executeUpdate();
+			if(ret > 0) {
+				System.out.printf("Pet atualizado, novo nome: %s",nome);
+			}
+			else{
+				System.out.println("Não foi possivel alterar registro do Pet");
+			}
+		}catch(SQLException se) {
+			System.out.println("Erro ao atualizar o registro do Pet" + se);
+			
+		}
+	
+	}
+	public void deletePet(int codigo) {
+		String sql = "DELETE FROM pets WHERE codigo = ?";
+		try {
+			PreparedStatement pst;
+			pst = connect.prepareStatement(sql);
+			pst.setInt(1, codigo);
+			int ret = pst.executeUpdate();
+			if(ret > 0) {
+				System.out.printf("Pet excluido com sucesso");
+			}
+			else{
+				System.out.println("Não foi possivel excluir registro Pet");
+			}
+			
+			}catch(SQLException se){
+				System.out.println("Erro ao excluir registro Pet" + se);
+				}
+			}
+		
+	public void updatePetPreco(int codigo) {
+	    String selectSql = "SELECT preco, reproducao FROM pets WHERE codigo = ?";
+	    String updateSql = "UPDATE pets SET preco = ? WHERE codigo = ?";
+
+	    try (
+	        PreparedStatement selectPst = connect.prepareStatement(selectSql);
+	        PreparedStatement updatePst = connect.prepareStatement(updateSql)
+	    ) {
+	        
+	        selectPst.setInt(1, codigo);
+	        ResultSet rs = selectPst.executeQuery();
+
+	        if (rs.next()) {
+	            double precoAtual = rs.getDouble("preco");
+	            boolean isReproducao = rs.getBoolean("reproducao");
+
+	            if (!isReproducao) {
+	                precoAtual *= 1.05;
+	            }
+
+	           
+	            updatePst.setDouble(1, precoAtual);
+	            updatePst.setInt(2, codigo);
+
+	            int ret = updatePst.executeUpdate();
+	            if (ret > 0) {
+	                System.out.printf("Peso do Pet atualizado para: %.2f%n", precoAtual);
+	            } else {
+	                System.out.println("Não foi possível atualizar o peso do Pet");
+	            }
+	        } else {
+	            System.out.println("Pet com o código especificado não encontrado.");
+	        }
+	    } catch (SQLException se) {
+	        System.out.println("Erro ao atualizar o peso do Pet: " + se.getMessage());
+	    }
+	}
+
+	}
+	
