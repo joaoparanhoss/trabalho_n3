@@ -1,0 +1,71 @@
+	package trabalho;
+import java.util.Scanner;
+public class Executora {
+		public static void  main(String[] args) {
+			CRUD crud = new CRUD();
+			crud.ConnectionDB();
+			Scanner scanner = new Scanner(System.in);
+			boolean continuar = true;
+			
+			while(continuar == true) {
+				System.out.println("\n--- Menu de Gerenciamento ---");
+				System.out.println("1- Adiconar Carro");
+				System.out.println("2. Adicionar loja");
+		        System.out.println("3. Atualizar Carro");
+		        System.out.println("4. Atualizar loja");
+		        System.out.println("5. Listar Carros");
+		        System.out.println("6. Listar Loja");
+		        System.out.println("7. Listar Carros da Loja");
+				System.out.println("0- Sair");
+				System.out.println("Escolha uma opção");
+				int opcao = scanner.nextInt();		
+
+				switch (opcao) {
+                case 1:
+                    System.out.println("Digite o código do carro");
+                    int codigo = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.println("Digite a marca do carro");
+                    String marca = scanner.nextLine();
+                    System.out.println("Digite o modelo do carro");
+                    String modelo = scanner.nextLine();
+                    System.out.println("Digite o ano de carro");
+                    int ano = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.println("Digite o id da loja");
+                    int idLoja = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.println("Marca capturada: " + marca);
+                    Veiculo e = new Veiculo (codigo, marca, modelo, ano, idLoja);
+                    crud.createVeiculo(e);
+                    break;
+                case 2:
+                    System.out.println("Digite o código da loja");
+                    int codigoLoja = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.println("Digite o nome da loja");
+                    String nome = scanner.nextLine();
+                    System.out.println("Digite o endereco da loja");
+                    String endereco = scanner.nextLine();
+                    Loja loja = new Loja(codigoLoja, nome, endereco);
+                    crud.createLoja(loja);
+                    break;
+                case 6:
+                	crud.readLoja();
+                	break;
+                    
+                case 0:
+                    continuar = false; 
+                    System.out.println("Saindo...");
+                    break;
+
+                default:
+                    System.out.println("Opção inválida.");
+            }
+        }
+
+        scanner.close(); 
+    }
+}
+		
+	
